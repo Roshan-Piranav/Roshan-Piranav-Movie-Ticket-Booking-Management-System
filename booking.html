@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Book Seats — MovieBox</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+<header class="header"><div class="brand">🎬 MovieBox</div><nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="bookings.html">My Bookings</a></nav></header>
+
+<main>
+  <div class="card">
+    <div id="bookingDetail"></div>
+    <div id="seatMap" class="seat-map" aria-hidden="true"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+      <div class="kv">Seats: <span id="selSeats">—</span></div>
+      <div class="kv">Price/seat: <span id="pSeat">₹0</span></div>
+      <div class="kv">Total: <strong id="totalAmt">₹0</strong></div>
+      <button id="confirm" class="btn primary" disabled>Confirm Booking</button>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">Choose seats and confirm.</footer>
+</div>
+<script src="common.js"></script>
+<script>
+const movies = fetchMoviesData();
+const params = new URLSearchParams(location.search);
+const movieId = params.get('id');
+const movie = movies.find(m=>m.id===movieId);
+const seatMapEl = document.getElementById('seatMap');
+const selected = new Set();
+function init(){
+  if(!movie){ document.getElementById('bookingDetail').innerHTML='<p>Movie not found</p>'; return; }
+  document.getElementById('bookingDetail').innerHTML = `<h3>Booking — ${movie.title}</h3><div class="kv">Price: ${formatCurrency(movie.price)}</div>`;
+  document.getElementById('pSeat').textContent = formatCurrency(movie.price);
+  renderSeats(6,8);
+}
+function renderSeats(rows, cols){
+  seatMapEl.innerHTML='';
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const seatId = String.fromCharCode(65+r)+(c+1);
+      const el = document.createElement('div'); el.className='seat'; el.textContent=seatId;
+      if(simpleHash(movie.id+seatId)%7===0){ el.classList.add('occupied'); }
+      el.addEventListener('click', ()=> toggleSeat(el, seatId));
+      seatMapEl.appendChild(el);
+    }
+  }
+  seatMapEl.setAttribute('aria-hidden','false');
+  updateSummary();
+}
+function toggleSeat(el, id){
+  if(el.classList.contains('occupied')) return;
+  el.classList.toggle('selected');
+  if(el.classList.contains('selected')) selected.add(id); else selected.delete(id);
+  updateSummary();
+}
+function updateSummary(){
+  const arr = Array.from(selected).sort();
+  document.getElementById('selSeats').textContent = arr.length?arr.join(', '):'—';
+  const total = arr.length * movie.price;
+  document.getElementById('totalAmt').textContent = formatCurrency(total);
+  document.getElementById('confirm').disabled = arr.length===0;
+}
+document.getElementById('confirm').addEventListener('click', ()=>{
+  const seats = Array.from(selected);
+  const booking = {id:'bk_'+Date.now(), movie:movie.title, movieId:movie.id, seats, amount:seats.length*movie.price, time:new Date().toISOString()};
+  saveBooking(booking);
+  alert('Booking confirmed!\n'+movie.title+'\nSeats: '+seats.join(', ')+'\nAmount: '+formatCurrency(booking.amount));
+  location.href='bookings.html';
+});
+function simpleHash(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h<<5)-h + s.charCodeAt(i); h |= 0;} return Math.abs(h); }
+init();
+</script></body></html>

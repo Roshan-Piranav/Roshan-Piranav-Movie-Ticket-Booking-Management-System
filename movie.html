@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Movie Details — MovieBox</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+<header class="header"><div class="brand">🎬 MovieBox</div><nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="bookings.html">My Bookings</a></nav></header>
+
+<main>
+  <div id="detailWrap" class="card"></div>
+</main>
+
+<footer class="footer">Movie details and booking</footer>
+</div>
+<script src="common.js"></script>
+<script>
+const movies = fetchMoviesData();
+function renderDetails(id){
+  const m = movies.find(x=>x.id===id); if(!m) { document.getElementById('detailWrap').innerHTML='<p>Movie not found</p>'; return; }
+  document.getElementById('detailWrap').innerHTML = `
+    <div style="display:flex;gap:16px;align-items:flex-start"><div style="flex:1">
+      <div class="movie-poster">${m.title}</div>
+    </div><div style="width:420px">
+      <h2>${m.title}</h2>
+      <div class="kv">Director: ${m.director}</div>
+      <div class="kv">Genre: ${m.genre}</div>
+      <div class="kv">Duration: ${m.duration}</div>
+      <div style="margin-top:12px" class="row"><div class="price">${formatCurrency(m.price)}</div><div><a class="btn primary" href="booking.html?id=${m.id}">Book Seats</a></div></div>
+      <div style="margin-top:12px"><p class="kv">Synopsis: This is a demo description. Replace with real synopsis in your project files.</p></div>
+    </div></div>`;
+}
+// read id from query
+const params = new URLSearchParams(location.search); const id = params.get('id'); renderDetails(id);
+</script></body></html>

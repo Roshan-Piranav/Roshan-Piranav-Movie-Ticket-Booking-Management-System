@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout — MovieBox</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+<header class="header"><div class="brand">🎬 MovieBox</div><nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="bookings.html">My Bookings</a></nav></header>
+<main><div class="card"><h3>Checkout</h3><p class="kv">This demo uses localStorage. Payments are not implemented.</p><div id="receipt"></div></div></main>
+<footer class="footer">Receipt page</footer></div>
+<script src="common.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const id = params.get('bk');
+const all = getBookings();
+const rec = all.find(b=>b.id===id);
+if(!rec){ document.getElementById('receipt').innerHTML='<p>No receipt found.</p>'; } else {
+  document.getElementById('receipt').innerHTML = `<div><strong>${rec.movie}</strong><div>Seats: ${rec.seats.join(', ')}</div><div>Amount: ${formatCurrency(rec.amount)}</div><div>Time: ${new Date(rec.time).toLocaleString()}</div></div>`;
+}
+</script></body></html>

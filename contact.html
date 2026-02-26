@@ -1,0 +1,7 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contact — MovieBox</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container"><header class="header"><div class="brand">🎬 MovieBox</div><nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="bookings.html">My Bookings</a></nav></header>
+<main><div class="card"><h3>Contact</h3><form id="contactForm"><div><label>Name</label><br><input id="name"/></div><div><label>Email</label><br><input id="email"/></div><div><label>Message</label><br><textarea id="msg" rows="4"></textarea></div><div style="margin-top:8px"><button class="btn primary" type="submit">Send</button></div></form></div></main>
+<footer class="footer">Contact page</footer></div>
+<script>
+document.getElementById('contactForm').addEventListener('submit', (e)=>{ e.preventDefault(); alert('Thanks! Message recorded in localStorage for demo.'); const data={name:document.getElementById('name').value,email:document.getElementById('email').value,msg:document.getElementById('msg').value,time:new Date().toISOString()}; const s = JSON.parse(localStorage.getItem('contacts')||'[]'); s.push(data); localStorage.setItem('contacts', JSON.stringify(s)); document.getElementById('contactForm').reset(); });
+</script></body></html>

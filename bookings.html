@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Bookings — MovieBox</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+<header class="header"><div class="brand">🎬 MovieBox</div><nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="about.html">About</a></nav></header>
+
+<main><div class="card"><h3>Your Bookings</h3><div id="bookList"></div></div></main>
+
+<footer class="footer">Manage your bookings</footer></div>
+<script src="common.js"></script>
+<script>
+function renderBookings(){
+  const all = getBookings();
+  const el = document.getElementById('bookList');
+  if(all.length===0) return el.innerHTML='<p>No bookings yet.</p>';
+  el.innerHTML='';
+  all.slice().reverse().forEach(b=>{
+    const d=document.createElement('div'); d.className='card'; d.style.marginBottom='10px';
+    d.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${b.movie}</strong><div class="kv">Seats: ${b.seats.join(', ')} • ${new Date(b.time).toLocaleString()}</div></div><div><a class="btn" href="checkout.html?bk=${b.id}">Receipt</a> <button class="btn" data-cancel="${b.id}">Cancel</button></div></div>`;
+    el.appendChild(d);
+  });
+  // cancel handlers
+  document.querySelectorAll('button[data-cancel]').forEach(btn=>btn.addEventListener('click', (e)=>{
+    const id = e.target.getAttribute('data-cancel');
+    const all = getBookings().filter(x=>x.id!==id); localStorage.setItem('bookings', JSON.stringify(all)); renderBookings();
+  }));
+}
+renderBookings();
+</script></body></html>

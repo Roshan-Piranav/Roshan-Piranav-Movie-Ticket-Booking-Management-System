@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MovieBox — Home</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+  <header class="header"><div class="brand">🎬 MovieBox</div>
+    <nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="bookings.html">My Bookings</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="card">
+        <h1>Find & Book Movie Tickets — Fast</h1>
+        <p class="kv">Search showtimes, choose seats and confirm bookings — completely frontend demo with improved UI/UX.</p>
+        <div style="margin-top:12px" class="searchbar">
+          <input id="homeSearch" placeholder="Search movies, director or genre...">
+          <button id="goMovies" class="btn primary">Browse Movies</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h3>Featured Movies</h3>
+        <div id="featured" class="movies-grid"></div>
+      </div>
+    </div>
+
+    <aside class="aside-panel">
+      <div class="card">
+        <h3>Quick Booking</h3>
+        <p class="kv">Pick a movie and quickly book seats from the Movies page.</p>
+        <a class="btn primary" href="movies.html">Start Booking</a>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h4>Support</h4>
+        <p class="kv">Questions? Visit contact page or email support@moviebox.demo</p>
+      </div>
+    </aside>
+  </section>
+
+  <footer class="footer">Made with ❤️ — Frontend-only demo. Use the Movies page to test booking flow.</footer>
+</div>
+<script src="common.js"></script>
+<script>
+// Home script
+const movies = fetchMoviesData();
+const featured = movies.slice(0,4);
+function renderFeatured(){
+  const el = document.getElementById('featured'); el.innerHTML='';
+  featured.forEach(m=>{
+    const d = document.createElement('article'); d.className='movie-card card'; d.innerHTML=`
+      <div class="movie-poster">${m.poster?'<img src="'+m.poster+'">':m.title}</div>
+      <div class="movie-body"><div class="movie-title">${m.title}</div><div class="meta">${m.genre} • ${m.duration}</div><div class="row"><div class="price">${m.price?formatCurrency(m.price):'₹0'}</div><a class="btn primary" href="movie.html?id=${m.id}">Book</a></div></div>`;
+    el.appendChild(d);
+  });
+}
+document.getElementById('goMovies').addEventListener('click', ()=> location.href='movies.html?q='+encodeURIComponent(document.getElementById('homeSearch').value));
+renderFeatured();
+</script>
+</body></html>

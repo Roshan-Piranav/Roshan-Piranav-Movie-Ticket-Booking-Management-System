@@ -1,0 +1,45 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Movies — MovieBox</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="container">
+<header class="header"><div class="brand">🎬 MovieBox</div><nav class="nav"><a href="index.html">Home</a><a href="movies.html">Movies</a><a href="bookings.html">My Bookings</a><a href="about.html">About</a></nav></header>
+
+<main>
+  <div class="card">
+    <div class="row">
+      <div style="flex:1">
+        <input id="searchInput" placeholder="Search movies, director, genre...">
+        <select id="genreFilter"><option value="">All genres</option></select>
+      </div>
+      <div><a class="btn" href="movies.html">Reset</a></div>
+    </div>
+    <div id="moviesGrid" class="movies-grid"></div>
+  </div>
+</main>
+
+<footer class="footer">Movies listing — enhanced UI</footer>
+</div>
+<script src="common.js"></script>
+<script>
+const movies = fetchMoviesData();
+const grid = document.getElementById('moviesGrid');
+function render(mList){
+  grid.innerHTML='';
+  mList.forEach(m => {
+    const card = document.createElement('article'); card.className='movie-card card';
+    card.innerHTML = `<div class="movie-poster">${m.title}</div><div class="movie-body"><div class="movie-title">${m.title}</div><div class="meta">${m.genre} • ${m.duration}</div><div class="row"><div class="price">${formatCurrency(m.price)}</div><div><a class="btn primary" href="movie.html?id=${m.id}">Details</a></div></div></div>`;
+    grid.appendChild(card);
+  });
+}
+function populateGenres(){
+  const sel = document.getElementById('genreFilter');
+  const genres = Array.from(new Set(movies.map(m=>m.genre))).sort();
+  genres.forEach(g=>{ const o=document.createElement('option'); o.value=g; o.textContent=g; sel.appendChild(o); });
+}
+function applyFilters(){ const q=document.getElementById('searchInput').value.trim().toLowerCase(); const g=document.getElementById('genreFilter').value; render(movies.filter(m=> (m.title+' '+m.director+' '+m.genre).toLowerCase().includes(q) && (!g||m.genre===g))); }
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+document.getElementById('genreFilter').addEventListener('change', applyFilters);
+populateGenres(); render(movies);
+
+// support query param prefill
+const params = new URLSearchParams(location.search);
+if(params.get('q')){ document.getElementById('searchInput').value = params.get('q'); applyFilters(); }
+</script></body></html>
